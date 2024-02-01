@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "18.x"
+    displayName: "Install Node.js"
+
+  - script: npm install
+    displayName: "Install dependencies"
+  
+  - script: npm run prettier:fix
+    displayName: "Prettier"
+  
+  - script: npm run lint:fix
+    displayName: "Lint"
+
+  - script: npm run build
+    displayName: "Build"
+
+  - task: AzureStaticWebApp@0
+    inputs:
+      output_location: "/public"
+      skip_app_build: true
+      skip_api_build: true
+      azure_static_web_apps_api_token: '3b59f14beea29b136aecaaa607fb1f3a76d7c884d1c58d193c844e01046cb5a64-287cab08-1041-43bc-8ac6-d04af2e735d7003347171'
